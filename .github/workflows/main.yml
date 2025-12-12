@@ -1,43 +1,66 @@
-name: Process Text Files
+name: Process Template Files
 
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  process-files:
+  process:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - name: Checkout repository
+      - uses: actions/checkout@v3
 
-      - name: Set variables
-        run: |
-          echo "NAME=Burhan" >> $GITHUB_ENV
-          echo "FILE2_SUM=$(awk -F'[ ,]+' '{for(i=1;i<=NF;i++) if($i~/^[0-9]+$/) s+=$i} END{print s}' file2.txt)" >> $GITHUB_ENV
+      - name: Show working directory
+        run: ls -l
 
-      - name: Replace placeholders in file1
-        env:
-          NAME: ${{ env.NAME }}
+      - name: Process Numbers.txt
+        id: numbers
         run: |
-          if [[ -f "file1.txt" ]]; then
-             sed -i "s/{{name}}/${NAME}/g" file1.txt
-          else
-             echo "Error: file1.txt not found!"
-             ls -la
-             exit 1
+          if [[ ! -f "Numbers.txt" ]]; then
+            echo "Error: Numbers.txt not found!"
+            exit 1
           fi
 
-      - name: Replace placeholders + compute sum in file2
-        env:
-          FILE2_SUM: ${{ env.FILE2_SUM }}
-        run: |
-          sed -i "s/{{sum}}/${FILE2_SUM}/g" file2.txt
+          # Extract numbers and calculate the sum
+          numbers=$(grep -oE '[0-9]+' Numbers.txt)
+          sum=0
+          for n in $numbers; do
+            sum=$((sum + n))
+          done
 
-      - name: Show output files
+          echo "SUM=$sum" >> $GITHUB_ENV
+          echo "Calculated sum: $sum"
+
+      - name: Process name.txt
+        id: namefile
         run: |
-          echo "----- file1.txt -----"
-          cat file1.txt
-          echo "----- file2.txt -----"
-          cat file2.txt
+          if [[ ! -f "name.txt" ]]; then
+            echo "Error: name.txt not found!"
+            exit 1
+          fi
+
+          NAME=$(cat name.txt)
+          echo "USERNAME=$NAME" >> $GITHUB_ENV
+          echo "Read name: $NAME"
+
+      - name: Create output files with replaced placeholders
+        run: |
+          mkdir output
+          
+          # Replace {{sum}} in Numbers.txt
+          sed "s/{{sum}}/$SUM/" Numbers.txt > output/Numbers_processed.txt
+
+          # Replace {{name}} in name.txt
+          sed "s/{{name}}/$USERNAME/" name.txt > output/name_processed.txt
+
+          echo "Generated processed files:"
+          ls -l output/
+
+      - name: Upload processed files as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: processed-files
+          path: output/
