@@ -29,13 +29,14 @@ jobs:
     env:
           NAME: ${{ env.NAME }}
 
-            - name: Replace placeholders + compute sum in file2
-        run: |
-          sed -i "s/{{sum}}/${FILE2_SUM}/g" file2.txt
-        env:
+            - name:Replace placeholders + compute sum in file2
+          run: |
+            sed -i "s/{{sum}}/${FILE2_SUM}/g" file2.txt
+  env:
           FILE2_SUM: ${{ env.FILE2_SUM }}
 
-      - name: Show output files
+        name: Show output files
+        
         run: |
           echo "----- file1.txt -----"
           cat file1.txt
