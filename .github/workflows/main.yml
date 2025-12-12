@@ -35,10 +35,7 @@ jobs:
   env:
           FILE2_SUM: ${{ env.FILE2_SUM }}
 
-        name: Show output files
+            name:Show output files
         
-        run: |
-          echo "----- file1.txt -----"
-          cat file1.txt
-          echo "----- file2.txt -----"
-          cat file2.txt
+          run: |
+echo "----- file1.txt -----" cat file1.txt echo "----- file2.txt -----" cat file2.txt
