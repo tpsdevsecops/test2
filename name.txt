@@ -1,1 +1,1 @@
-My name is: NAMEPLACEHOLDER
+Hello, my name is {{name}}.
