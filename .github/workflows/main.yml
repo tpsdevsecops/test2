@@ -18,24 +18,26 @@ jobs:
           echo "FILE2_SUM=$(awk -F'[ ,]+' '{for(i=1;i<=NF;i++) if($i~/^[0-9]+$/) s+=$i} END{print s}' file2.txt)" >> $GITHUB_ENV
 
       - name: Replace placeholders in file1
+        env:
+          NAME: ${{ env.NAME }}
         run: |
           if [[ -f "file1.txt" ]]; then
              sed -i "s/{{name}}/${NAME}/g" file1.txt
-              else
-                echo "Error: file1.txt not found!"
-               ls -la 
-              exit 1
-              fi
-    env:
-          NAME: ${{ env.NAME }}
+          else
+             echo "Error: file1.txt not found!"
+             ls -la
+             exit 1
+          fi
 
-            - name:Replace placeholders + compute sum in file2
-          run: |
-            sed -i "s/{{sum}}/${FILE2_SUM}/g" file2.txt
-  env:
+      - name: Replace placeholders + compute sum in file2
+        env:
           FILE2_SUM: ${{ env.FILE2_SUM }}
+        run: |
+          sed -i "s/{{sum}}/${FILE2_SUM}/g" file2.txt
 
-            name:Show output files
-        
-          run: |
-echo "----- file1.txt -----" cat file1.txt echo "----- file2.txt -----" cat file2.txt
+      - name: Show output files
+        run: |
+          echo "----- file1.txt -----"
+          cat file1.txt
+          echo "----- file2.txt -----"
+          cat file2.txt
