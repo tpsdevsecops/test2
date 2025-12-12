@@ -15,23 +15,25 @@ jobs:
       - name: Set variables
         run: |
           echo "NAME=Burhan" >> $GITHUB_ENV
-          echo "FILE2_SUM=$(awk -F'[ ,]+' '{for(i=1;i<=NF;i++) if($i~/^[0-9]+$/) s+=$i} END{print s}' file2.txt)" >> $GITHUB_ENV
 
-      - name: Replace placeholders in file1
+          # Calculate sum from Numbers.txt
+          echo "FILE_SUM=$(awk -F'[ ,]+' '{for(i=1;i<=NF;i++) if($i~/^[0-9]+$/) s+=$i} END{print s}' Numbers.txt)" >> $GITHUB_ENV
+
+      - name: Replace {{name}} in name.txt
         run: |
-          sed -i "s/{{name}}/${NAME}/g" file1.txt
+          sed -i "s/{{name}}/${NAME}/g" name.txt
         env:
           NAME: ${{ env.NAME }}
 
-      - name: Replace placeholders + compute sum in file2
+      - name: Replace {{sum}} in Numbers.txt
         run: |
-          sed -i "s/{{sum}}/${FILE2_SUM}/g" file2.txt
+          sed -i "s/{{sum}}/${FILE_SUM}/g" Numbers.txt
         env:
-          FILE2_SUM: ${{ env.FILE2_SUM }}
+          FILE_SUM: ${{ env.FILE_SUM }}
 
       - name: Show output files
         run: |
-          echo "----- file1.txt -----"
-          cat file1.txt
-          echo "----- file2.txt -----"
-          cat file2.txt
+          echo "----- name.txt -----"
+          cat name.txt
+          echo "----- Numbers.txt -----"
+          cat Numbers.txt
