@@ -23,13 +23,13 @@ jobs:
              sed -i "s/{{name}}/${NAME}/g" file1.txt
               else
                 echo "Error: file1.txt not found!"
-    ls -la # List files to see what is actually there
-  exit 1
-fi
-        env:
+               ls -la 
+              exit 1
+              fi
+    env:
           NAME: ${{ env.NAME }}
 
-      - name: Replace placeholders + compute sum in file2
+            - name: Replace placeholders + compute sum in file2
         run: |
           sed -i "s/{{sum}}/${FILE2_SUM}/g" file2.txt
         env:
