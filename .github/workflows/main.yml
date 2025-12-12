@@ -19,7 +19,13 @@ jobs:
 
       - name: Replace placeholders in file1
         run: |
-          sed -i "s/{{name}}/${NAME}/g" file1.txt
+          if [[ -f "file1.txt" ]]; then
+             sed -i "s/{{name}}/${NAME}/g" file1.txt
+              else
+                echo "Error: file1.txt not found!"
+    ls -la # List files to see what is actually there
+  exit 1
+fi
         env:
           NAME: ${{ env.NAME }}
 
