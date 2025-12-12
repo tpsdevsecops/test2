@@ -1,3 +1,2 @@
-num1 = NUMBER1
-num1 = NUMBER2
-sum = SUMPLACEHOLDER
+The numbers are: 10, 20, 30.
+Their sum is: {{sum}}.
